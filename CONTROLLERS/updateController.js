@@ -3,6 +3,7 @@ const User = require('../MODELS/userModel');
 const updateAvailablity = async (req, res) => {
     const { id } = req.params;
     try {
+       
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found', status: false });
@@ -16,6 +17,30 @@ const updateAvailablity = async (req, res) => {
         res.status(500).json({ message: 'Internal server error', status: false });
     }
 };
+
+const updateToken = async (req, res) => {
+    const { id } = req.params;
+    const { tokens, coins } = req.body;
+  
+    try {
+      // Validate input
+      if (!tokens || !coins) {
+        return res.status(400).json({ message: 'Tokens and coins are required.' });
+      }
+  
+      // Find the user by ID and update tokens and coins
+      const user = await User.findByIdAndUpdate(id, { tokens, coins }, { new: true });
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+  
+      res.status(200).json({ message: 'Tokens and coins updated successfully.',status:true, user });
+    } catch (error) {
+      console.error('Error updating tokens and coins:', error);
+      res.status(500).json({ message: 'Server error.' });
+    }
+  };
 
 // Updated updateRating function to calculate and store the average rating
 const updateRating = async (req, res) => {
@@ -58,4 +83,4 @@ const updateRating = async (req, res) => {
     }
 };
 
-module.exports = { updateAvailablity, updateRating };
+module.exports = { updateAvailablity, updateRating,updateToken };
